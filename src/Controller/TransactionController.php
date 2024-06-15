@@ -1,6 +1,4 @@
 <?php
-// src/Controller/TransactionController.php
-
 namespace App\Controller;
 
 use App\Entity\Transaction;
