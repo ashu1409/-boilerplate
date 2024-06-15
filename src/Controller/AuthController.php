@@ -1,4 +1,4 @@
-// src/Controller/AuthController.php
+<?php
 
 namespace App\Controller;
 
