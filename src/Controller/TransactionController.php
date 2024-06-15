@@ -1,6 +1,13 @@
 <?php
+// src/Controller/TransactionController.php
+
 namespace App\Controller;
 
+use App\Entity\Transaction;
+use App\Entity\Location;
+use App\Repository\TransactionRepository;
+use App\Repository\LocationRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -8,19 +15,49 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class TransactionController extends AbstractController
 {
-    /**
-     * @Route("/transactions", methods={"GET"})
-     */
-    public function getTransactions()
+    private $transactionRepository;
+    private $locationRepository;
+    private $entityManager;
+
+    public function __construct(TransactionRepository $transactionRepository, LocationRepository $locationRepository, EntityManagerInterface $entityManager)
     {
-        // Fetch transactions for the logged-in user
+        $this->transactionRepository = $transactionRepository;
+        $this->locationRepository = $locationRepository;
+        $this->entityManager = $entityManager;
     }
 
     /**
-     * @Route("/transactions/{id}/location", methods={"POST"})
+     * @Route("/transactions", name="get_transactions", methods={"GET"})
      */
-    public function updateTransactionLocation(Request $request, $id)
+    public function getTransactions(): JsonResponse
     {
-        // Update transaction with the selected location
+        $user = $this->getUser();
+        $transactions = $this->transactionRepository->findBy(['user' => $user]);
+
+        return $this->json($transactions);
+    }
+
+    /**
+     * @Route("/transactions/{id}/location", name="update_transaction_location", methods={"POST"})
+     */
+    public function updateTransactionLocation(Request $request, $id): JsonResponse
+    {
+        $transaction = $this->transactionRepository->find($id);
+
+        if (!$transaction) {
+            return $this->json(['error' => 'Transaction not found'], 404);
+        }
+
+        $locationData = json_decode($request->getContent(), true);
+        $location = new Location();
+        $location->setName($locationData['name']);
+        $location->setLatitude($locationData['latitude']);
+        $location->setLongitude($locationData['longitude']);
+
+        $this->entityManager->persist($location);
+        $transaction->setLocation($location);
+        $this->entityManager->flush();
+
+        return $this->json(['message' => 'Transaction location updated successfully']);
     }
 }
