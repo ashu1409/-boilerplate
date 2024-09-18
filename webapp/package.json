@@ -21,13 +21,13 @@
   },
   "dependencies": {
     "@nuxtjs/toast": "^3.3.1",
-    "bootstrap-vue": "^2.20.1",
-    "cookie-universal-nuxt": "^2.1.4",
-    "graphql": "^16.2.0",
+    "bootstrap-vue": "^2.23.1",
+    "cookie-universal-nuxt": "^2.2.2",
+    "graphql": "^16.9.0",
     "graphql-tag": "^2.12.6",
-    "nuxt": "^2.14.12",
+    "nuxt": "^2.18.1",
     "nuxt-graphql-request": "^3.2.1",
-    "nuxt-i18n": "^6.15.1",
+    "nuxt-i18n": "^6.28.1",
     "nuxt-logrocket": "^1.2.10"
   },
   "devDependencies": {
